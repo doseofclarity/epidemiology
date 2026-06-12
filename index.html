@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Epidemiology Concepts | CHN White Book | Rates · Triad · Study Designs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        .transition-all { transition: all 0.3s ease; }
+        .recall-mode .reveal-text {
+            background-color: #cbd5e1;
+            color: transparent;
+            border-radius: 0.375rem;
+            padding: 0 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            box-shadow: inset 0 0 0 1px #94a3b8;
+        }
+        .recall-mode .reveal-text:hover,
+        .recall-mode .reveal-text.revealed {
+            background-color: #fde047;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #7c2d12; border-radius: 8px; }
+        .content-section { animation: fade 0.3s ease; }
+        @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .locked-section { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+        .quiz-feedback-correct { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+        .quiz-feedback-wrong { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+        .nav-btn i.fa-lock, .nav-btn i.fa-unlock-alt { width: 1.5rem; display: inline-block; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; vertical-align: top; }
+        th { background-color: #f1f5f9; }
+    </style>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { epi: { light: '#ffedd5', DEFAULT: '#c2410c', dark: '#9a3412' } } } } }
+    </script>
+</head>
+<body class="bg-slate-50 h-screen flex flex-col md:flex-row font-sans text-slate-800 overflow-hidden">
+
+    <!-- Mobile header -->
+    <div class="md:hidden bg-epi-dark text-white p-4 flex justify-between items-center shadow-md z-30 shrink-0">
+        <button onclick="toggleMobileMenu()" class="text-white focus:outline-none z-40"><i class="fa-solid fa-bars text-2xl"></i></button>
+        <h1 class="font-bold text-lg absolute left-1/2 transform -translate-x-1/2 pointer-events-none"><i class="fa-solid fa-virus mr-2"></i>Epidemiology</h1>
+        <div class="w-8"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar" class="hidden md:flex flex-col w-full md:w-80 bg-white shadow-2xl h-full absolute md:relative z-30 transition-transform duration-300 shrink-0 border-r border-slate-200">
+        <div class="p-6 bg-gradient-to-br from-epi-dark to-epi text-white hidden md:block shrink-0">
+            <h1 class="font-black text-2xl tracking-wide"><i class="fa-solid fa-virus mr-2"></i> Epidemiology Concepts</h1>
+            <p class="text-sm text-slate-300 mt-1">Epidemiologic Triad · Rates · Study Designs · Outbreak Investigation</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 text-sm font-medium">
+                <li><button onclick="showSection('home')" id="btn-home" class="nav-btn w-full text-left px-6 py-3 bg-epi-light text-epi-dark border-r-4 border-epi-dark"><i class="fa-solid fa-house w-6 nav-icon"></i><i class="fa-solid fa-lock w-6 hidden"></i> Start / Overview</button></li>
+                <li><button onclick="showSection('definition')" id="btn-definition" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-book-open w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Definition & Scope</button></li>
+                <li><button onclick="showSection('triad')" id="btn-triad" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-shield-virus w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Epidemiologic Triad & Chain of Infection</button></li>
+                <li><button onclick="showSection('rates')" id="btn-rates" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-chart-line w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Measures of Disease Frequency (Rates, Ratios)</button></li>
+                <li><button onclick="showSection('studies')" id="btn-studies" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-flask w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Study Designs (Descriptive, Analytical, Experimental)</button></li>
+                <li><button onclick="showSection('surveillance')" id="btn-surveillance" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-eye w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Disease Surveillance & Outbreak Investigation</button></li>
+                <li><button onclick="showSection('phn_role')" id="btn-phn_role" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-user-nurse w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> PHN Role in Epidemiology</button></li>
+                <li><button onclick="showSection('mnemonics')" id="btn-mnemonics" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 border-t mt-2 locked-section"><i class="fa-solid fa-brain w-6 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Mnemonics & Recap</button></li>
+                <li><button onclick="showSection('final_quiz_sec')" id="btn-final_quiz_sec" class="nav-btn w-full text-left px-6 py-3 text-slate-600 hover:bg-slate-50 locked-section"><i class="fa-solid fa-graduation-cap w-6 text-amber-500 nav-icon hidden"></i><i class="fa-solid fa-lock w-6"></i> Final 50‑Item Exam</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="flex-1 h-full overflow-y-auto bg-slate-100 relative w-full">
+        <div class="fixed top-16 md:top-4 right-4 md:right-8 z-40 flex items-center bg-white/90 backdrop-blur px-4 py-3 rounded-full shadow-lg border border-slate-200 cursor-pointer hover:bg-slate-50" onclick="toggleRecallMode()">
+            <span class="mr-3 text-sm font-bold text-slate-700 hidden md:inline"><i class="fa-solid fa-brain text-epi mr-1"></i> Active Recall</span>
+            <span class="mr-3 text-sm font-bold text-slate-700 md:hidden"><i class="fa-solid fa-brain text-epi"></i></span>
+            <button id="recall-toggle" class="w-12 h-6 bg-slate-300 rounded-full relative transition-colors duration-300 pointer-events-none"><div id="recall-knob" class="w-5 h-5 bg-white rounded-full absolute top-0.5 left-0.5 transition-transform duration-300 shadow"></div></button>
+        </div>
+
+        <div class="p-4 md:p-8 max-w-6xl mx-auto pb-32">
+            <!-- HOME SECTION -->
+            <section id="home" class="content-section flex flex-col items-center justify-center min-h-[80vh] text-center block">
+                <div class="bg-gradient-to-br from-slate-800 to-epi-dark text-white rounded-3xl shadow-2xl p-10 md:p-16 w-full">
+                    <div class="relative z-10">
+                        <div class="bg-white/10 inline-block p-4 rounded-full mb-6"><i class="fa-solid fa-chart-line text-5xl"></i></div>
+                        <h3 class="text-xl font-bold text-slate-300 mb-2 uppercase">Community Health Nursing</h3>
+                        <h1 class="text-4xl md:text-6xl font-black mb-6">Epidemiology Concepts<br>for Public Health Nurses</h1>
+                        <div class="bg-white/10 inline-block px-6 py-3 rounded-full mb-10"><p class="text-lg">Triad · Rates · Study Designs · Outbreak Investigation</p></div>
+                        <button onclick="unlockFirstSection()" class="bg-slate-600 hover:bg-slate-500 text-white font-black py-4 px-10 rounded-full shadow-xl text-lg flex items-center mx-auto">Begin Lecture <i class="fa-solid fa-arrow-right ml-3"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 1: Definition & Scope -->
+            <section id="definition" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-book-open text-epi mr-4"></i> Definition & Scope of Epidemiology</h2><div class="grid md:grid-cols-2 gap-6"><div><ul class="list-disc pl-5 space-y-2"><li><span class="reveal-text">Epidemiology</span> – study of distribution and determinants of health‑related states in populations, and application to control health problems.</li><li>Focus: <span class="reveal-text">distribution</span> (who, where, when) and <span class="reveal-text">determinants</span> (causes, risk factors).</li><li>Investigates <span class="reveal-text">frequency</span> (rates) and <span class="reveal-text">patterns</span> (person, place, time).</li><li>Includes both disease and health events (e.g., injury, wellness).</li></ul></div><div><div class="bg-amber-50 p-4 rounded-xl"><p class="font-bold">Key components:</p><ul><li>Descriptive epidemiology (person, place, time).</li><li>Analytic epidemiology (testing hypotheses).</li><li>Applied epidemiology (surveillance, outbreak investigation, evaluation).</li></ul></div></div></div><button onclick="openQuiz('definition')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">📖 Take Quiz (10 items) to Unlock Next Section</button></div></section>
+
+            <!-- SECTION 2: Epidemiologic Triad & Chain of Infection -->
+            <section id="triad" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-shield-virus text-epi mr-4"></i> Epidemiologic Triad & Chain of Infection</h2><div class="grid md:grid-cols-2 gap-6"><div><p class="font-bold">Epidemiologic Triad:</p><ul class="list-disc pl-5"><li><span class="reveal-text">Agent</span> – infectious agent, chemical, physical (e.g., bacteria, virus, toxin).</li><li><span class="reveal-text">Host</span> – human with susceptibility, immunity, behavior.</li><li><span class="reveal-text">Environment</span> – physical, biological, social conditions that allow transmission.</li></ul><p class="font-bold mt-3">Chain of Infection:</p><ul><li>Infectious agent → Reservoir → Portal of exit → Mode of transmission → Portal of entry → Susceptible host.</li></ul></div><div><div class="bg-green-50 p-4 rounded-xl"><p class="font-bold">Modes of transmission:</p><ul><li>Direct contact, droplet, airborne, vehicle‑borne (water, food), vector‑borne.</li><li>Breaking any link prevents disease.</li></ul></div></div></div><button onclick="openQuiz('triad')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">🦠 Take Quiz (10 items) to Unlock Next Section</button></div></section>
+
+            <!-- SECTION 3: Measures of Disease Frequency -->
+            <section id="rates" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-chart-line text-epi mr-4"></i> Measures of Disease Frequency (Rates, Ratios)</h2><div><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Measure</th><th>Formula</th><th>Interpretation</th></tr></thead><tbody><tr class="border-b"><td class="font-medium">Incidence rate</td><td>(new cases / population at risk) × multiplier</td><td class="reveal-text">New events over time (risk)</td></tr><tr class="border-b bg-slate-50"><td>Prevalence rate</td><td>(total existing cases / total population) × 100</td><td class="reveal-text">All cases at a point in time (burden)</td></tr><tr class="border-b"><td>Attack rate</td><td>(ill / exposed) × 100</td><td class="reveal-text">Used in outbreaks</td></tr><tr class="border-b bg-slate-50"><td>Crude death rate</td><td>(deaths / total population) × 100,000</td><td class="reveal-text">General mortality</td></tr><tr class="border-b"><td>Infant mortality rate (IMR)</td><td>(infant deaths / live births) × 1,000</td><td class="reveal-text">Indicator of population health</td></tr><tr><td>Maternal mortality ratio (MMR)</td><td>(maternal deaths / live births) × 100,000</td><td class="reveal-text">Quality of obstetric care</td></tr></tbody></table></div><div class="bg-epi-light p-3 mt-4 rounded-lg"><p><strong>Key distinction:</strong> Incidence = new cases (risk); Prevalence = old + new (burden).</p></div></div><button onclick="openQuiz('rates')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">📊 Take Quiz (10 items) to Unlock Next Section</button></div></section>
+
+            <!-- SECTION 4: Study Designs -->
+            <section id="studies" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-flask text-epi mr-4"></i> Study Designs in Epidemiology</h2><div class="grid md:grid-cols-2 gap-4"><div><p class="font-bold">Descriptive studies:</p><ul><li>Case reports, case series, cross‑sectional surveys.</li><li>Generate hypotheses.</li></ul><p class="font-bold mt-2">Analytical studies:</p><ul><li><span class="reveal-text">Case‑control</span> – retrospective, odds ratio.</li><li><span class="reveal-text">Cohort</span> – prospective/retrospective, relative risk.</li></ul></div><div><p class="font-bold">Experimental studies:</p><ul><li>Randomized controlled trials (RCTs), community trials.</li><li>Test interventions (e.g., vaccine efficacy).</li></ul><div class="bg-amber-50 p-3 mt-2 rounded"><p><strong>Mnemonic:</strong> D‑A‑E = Descriptive → Analytical → Experimental (pyramid of evidence).</p></div></div></div><button onclick="openQuiz('studies')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">🔬 Take Quiz (10 items) to Unlock Next Section</button></div></section>
+
+            <!-- SECTION 5: Disease Surveillance & Outbreak Investigation -->
+            <section id="surveillance" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-eye text-epi mr-4"></i> Disease Surveillance & Outbreak Investigation</h2><div><ul class="list-disc pl-5 space-y-2"><li><span class="reveal-text">Surveillance</span> – ongoing systematic collection, analysis, interpretation, dissemination of health data.</li><li><span class="reveal-text">NESSS</span> – National Epidemic Sentinel Surveillance System (hospital‑based).</li><li>Notifiable diseases (e.g., AFP, measles, neonatal tetanus, rabies).</li><li><span class="reveal-text">Outbreak investigation steps:</span> prepare, verify diagnosis, define cases, descriptive epidemiology, develop hypotheses, evaluate, implement control, communicate findings.</li><li>Case definition: clinical, time, place, person.</li></ul><div class="bg-epi-light p-3 mt-4 rounded-lg"><p><strong>Outbreak types:</strong> Sporadic, endemic, epidemic, pandemic, cluster.</p></div></div><button onclick="openQuiz('surveillance')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">⚠️ Take Quiz (10 items) to Unlock Next Section</button></div></section>
+
+            <!-- SECTION 6: PHN Role in Epidemiology -->
+            <section id="phn_role" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-user-nurse text-epi mr-4"></i> PHN Role in Epidemiology</h2><ul class="list-disc pl-5 space-y-3"><li><strong>Surveillance:</strong> Report notifiable diseases (AFP, measles, etc.) using FHSIS and NESSS.</li><li><strong>Data collection:</strong> Collect accurate morbidity/mortality data from home visits and clinics.</li><li><strong>Outbreak response:</strong> Participate in case finding, contact tracing, specimen collection, health education.</li><li><strong>Calculate rates:</strong> Compute incidence, prevalence, attack rates for local planning.</li><li><strong>Interpret data:</strong> Use vital statistics to identify high‑risk groups.</li><li><strong>Advocacy:</strong> Present epidemiological evidence to LHB for resource allocation.</li><li><strong>Research:</strong> Conduct community surveys and assist in epidemiological studies.</li></ul><div class="bg-epi-light p-3 mt-4 rounded-lg"><p><i class="fa-regular fa-lightbulb"></i> <strong>Key role:</strong> The PHN is the frontline epidemiologist in the community – detecting signals, responding early.</p></div><button onclick="openQuiz('phn_role')" class="mt-8 w-full bg-epi text-white font-black py-4 rounded-xl">🩺 Take Quiz (10 items) to Unlock Mnemonics & Final Exam</button></div></section>
+
+            <!-- MNEMONICS & RECAP -->
+            <section id="mnemonics" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8"><h2 class="text-3xl font-black mb-6 border-b-2 border-epi pb-3"><i class="fa-solid fa-brain text-epi mr-4"></i> Mnemonics & Quick Recap</h2><div class="overflow-x-auto"><table class="w-full border-collapse"><thead class="bg-epi-dark text-white"><tr><th class="p-2">Topic</th><th class="p-2">Mnemonic</th><th class="p-2">Explanation</th></tr></thead><tbody><tr class="border-b"><td class="p-2">Epidemiologic triad</td><td class="text-epi font-black">A‑H‑E</td><td class="reveal-text">Agent, Host, Environment</td></tr><tr class="bg-slate-50 border-b"><td class="p-2">Chain of infection links</td><td class="text-epi font-black">R‑P‑E‑M‑P‑S</td><td class="reveal-text">Reservoir, Portal of exit, Mode of transmission, Portal of entry, Susceptible host</td></tr><tr class="border-b"><td class="p-2">Difference incidence/prevalence</td><td class="text-epi font-black">Incidence = New; Prevalence = Old+New</td><td class="reveal-text">Incidence = new cases / time; Prevalence = all cases at a point</td></tr><tr class="bg-slate-50 border-b"><td class="p-2">Study design hierarchy</td><td class="text-epi font-black">D‑A‑E</td><td class="reveal-text">Descriptive → Analytical → Experimental</td></tr><tr class="border-b"><td class="p-2">Outbreak investigation steps</td><td class="text-epi font-black">P‑V‑D‑D‑H‑E‑I‑C</td><td class="reveal-text">Prepare, Verify, Define cases, Descriptive, Hypothesis, Evaluate, Implement control, Communicate</td></tr><tr><td class="p-2">Surveillance systems in PH</td><td class="text-epi font-black">NESSS & FHSIS</td><td class="reveal-text">National Epidemic Sentinel Surveillance System; Field Health Service Information System</td></tr></tbody></table></div><button onclick="openQuiz('final_quiz')" class="mt-8 w-full bg-amber-500 text-slate-900 font-black py-4 rounded-xl text-lg">🎓 Take Final 50‑Item Exam</button></div></section>
+
+            <!-- FINAL QUIZ SECTION -->
+            <section id="final_quiz_sec" class="content-section hidden"><div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 text-center min-h-[60vh] flex flex-col justify-center items-center"><i class="fa-solid fa-graduation-cap text-8xl text-amber-400 mb-6"></i><h2 class="text-4xl font-black text-slate-800 mb-4">Epidemiology Concepts Mastery Exam</h2><p class="text-lg text-slate-600 mb-8">50 items covering definitions, triad, rates, study designs, surveillance, outbreak investigation, and PHN role. 75% required to pass.</p><button onclick="openQuiz('final_quiz')" class="w-full max-w-md bg-slate-800 text-white font-black py-4 rounded-xl text-xl">Start Final Exam</button></div></section>
+        </div>
+    </main>
+
+    <!-- QUIZ MODAL -->
+    <div id="quiz-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/80 backdrop-blur-sm p-4"><div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto"><button onclick="closeQuiz()" class="absolute top-4 right-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-2xl"></i></button><h2 id="quiz-title" class="text-3xl font-black text-slate-800 mb-2"></h2><p class="text-slate-600 mb-6 border-b pb-4">Score ≥75% to unlock next section.</p><div id="quiz-questions-container" class="space-y-4"></div><button id="quiz-submit-btn" onclick="submitQuiz()" class="mt-8 w-full bg-epi text-white font-bold py-4 rounded-xl">Submit Answers</button><div id="quiz-result-container" class="hidden mt-6 p-4 rounded-xl bg-slate-100 border"></div></div></div>
+
+    <script>
+        let unlockedSections = ['home'];
+        // QUIZ DATA (10 questions each section)
+        const quizzes = {
+            definition: { title: "Definition & Scope of Epidemiology", next: "triad", questions: [
+                { q: "The study of the distribution and determinants of health‑related states in populations is called:", options: ["Epidemiology", "Biostatistics", "Demography", "Pathology"], ans: 0 },
+                { q: "Descriptive epidemiology focuses on:", options: ["Person, place, time", "Causal relationships", "Randomized trials", "Laboratory experiments"], ans: 0 },
+                { q: "Which of the following is a key component of epidemiology?", options: ["Disease surveillance", "Drug prescription", "Surgery", "Physical therapy"], ans: 0 },
+                { q: "Epidemiology is applied to:", options: ["Control of health problems and program evaluation", "Only academic research", "Only infectious diseases", "Hospital administration only"], ans: 0 },
+                { q: "The term 'distribution' in epidemiology refers to:", options: ["Frequency and pattern of health events", "Drug distribution", "Geographic mapping only", "Randomization"], ans: 0 },
+                { q: "Which question would descriptive epidemiology answer?", options: ["Who is affected and where?", "Why did the outbreak occur?", "What is the cause of disease?", "Which treatment is best?"], ans: 0 },
+                { q: "Analytic epidemiology aims to:", options: ["Test hypotheses about causes", "Count cases", "Describe symptoms", "Create maps"], ans: 0 },
+                { q: "Epidemiology can study:", options: ["Both infectious and non‑communicable diseases", "Only infectious diseases", "Only chronic diseases", "Only injuries"], ans: 0 },
+                { q: "The ultimate goal of epidemiology is to:", options: ["Prevent and control health problems", "Collect data without action", "Publish papers only", "Train statisticians"], ans: 0 },
+                { q: "Who is considered the father of modern epidemiology?", options: ["John Snow", "Louis Pasteur", "Robert Koch", "Florence Nightingale"], ans: 0 }
+            ]},
+            triad: { title: "Epidemiologic Triad & Chain of Infection", next: "rates", questions: [
+                { q: "The three components of the epidemiologic triad are:", options: ["Agent, host, environment", "Person, place, time", "Cause, effect, interaction", "Bacteria, virus, fungus"], ans: 0 },
+                { q: "In the chain of infection, the 'reservoir' is:", options: ["Where the agent normally lives (human, animal, environment)", "The exit route", "The mode of transmission", "The susceptible host"], ans: 0 },
+                { q: "Mosquitoes that transmit malaria are considered a:", options: ["Vector (mode of transmission)", "Agent", "Host", "Reservoir"], ans: 0 },
+                { q: "Breaking the chain of infection at the 'portal of entry' can be achieved by:", options: ["Hand hygiene and wound care", "Vaccination", "Sanitation", "Isolation"], ans: 0 },
+                { q: "Which is NOT a mode of transmission?", options: ["Genetic mutation", "Airborne", "Direct contact", "Vector‑borne"], ans: 0 },
+                { q: "An example of a vehicle‑borne transmission is:", options: ["Contaminated water", "Sneezing", "Mosquito bite", "Handshake"], ans: 0 },
+                { q: "Host factors that influence disease susceptibility include:", options: ["Age, immunity, nutrition, genetics", "Only bacteria", "Only environment", "Only climate"], ans: 0 },
+                { q: "The environment in the triad includes:", options: ["Physical, biological, social factors", "Only weather", "Only pollution", "Only housing"], ans: 0 },
+                { q: "Which of the following is an infectious agent?", options: ["Salmonella bacteria", "Heat", "Trauma", "Carcinogen"], ans: 0 },
+                { q: "Vaccination protects the host by:", options: ["Increasing resistance (breaking host susceptibility)", "Killing the agent directly", "Changing the environment", "Blocking the portal of exit"], ans: 0 }
+            ]},
+            rates: { title: "Measures of Disease Frequency", next: "studies", questions: [
+                { q: "Incidence refers to:", options: ["New cases occurring over a specified time period", "All existing cases at a point in time", "Deaths from a disease", "Proportion of deaths from a specific cause"], ans: 0 },
+                { q: "Prevalence is used to measure:", options: ["Burden of disease in a population", "Risk of developing disease", "Speed of disease spread", "Case fatality"], ans: 0 },
+                { q: "Attack rate is a special type of incidence used during:", options: ["Outbreaks", "Chronic disease studies", "Genetic studies", "Cross‑sectional surveys"], ans: 0 },
+                { q: "If 50 new cases of TB occur in a population of 10,000 during one year, the incidence rate per 1,000 is:", options: ["5 per 1,000", "0.5 per 1,000", "50 per 1,000", "500 per 1,000"], ans: 0 },
+                { q: "Infant mortality rate is calculated as:", options: ["(Infant deaths / live births) × 1,000", "(Infant deaths / total population) × 100,000", "(Live births / infant deaths) × 1,000", "(Maternal deaths / infant deaths) × 1,000"], ans: 0 },
+                { q: "Prevalence is most useful for:", options: ["Health service planning (burden)", "Identifying risk factors", "Determining causation", "Testing vaccine efficacy"], ans: 0 },
+                { q: "Crude death rate uses which denominator?", options: ["Total mid‑year population", "Live births", "Infant population", "Elderly population"], ans: 0 },
+                { q: "Maternal mortality ratio is expressed per:", options: ["100,000 live births", "1,000 live births", "10,000 population", "100,000 population"], ans: 0 },
+                { q: "Which measure is most sensitive to changes in disease occurrence over short periods?", options: ["Incidence", "Prevalence", "Crude death rate", "Case fatality"], ans: 0 },
+                { q: "A point prevalence survey examines:", options: ["Existing cases at a specific date", "New cases over a year", "Lifetime risk", "Deaths from a disease"], ans: 0 }
+            ]},
+            studies: { title: "Study Designs", next: "surveillance", questions: [
+                { q: "A cross‑sectional study is classified as:", options: ["Descriptive study", "Experimental study", "Case‑control", "Cohort"], ans: 0 },
+                { q: "Which study design is best for testing a new vaccine?", options: ["Randomized controlled trial", "Case‑control", "Cohort", "Cross‑sectional"], ans: 0 },
+                { q: "Case‑control studies measure association using:", options: ["Odds ratio", "Relative risk", "Incidence rate", "Prevalence ratio"], ans: 0 },
+                { q: "Cohort studies measure association using:", options: ["Relative risk (RR)", "Odds ratio (OR)", "Correlation coefficient", "P‑value"], ans: 0 },
+                { q: "In a cohort study, subjects are selected based on:", options: ["Exposure status", "Disease status", "Random selection", "Convenience"], ans: 0 },
+                { q: "Which study is retrospective?", options: ["Case‑control", "Prospective cohort", "RCT", "Cross‑sectional"], ans: 0 },
+                { q: "The highest level of evidence (pyramid) is from:", options: ["Systematic reviews / RCTs", "Case reports", "Cross‑sectional studies", "Expert opinion"], ans: 0 },
+                { q: "A study that follows a group of healthy individuals over time to see who develops disease is a:", options: ["Prospective cohort", "Retrospective cohort", "Case‑control", "Cross‑sectional"], ans: 0 },
+                { q: "Case‑control studies are efficient for studying:", options: ["Rare diseases", "Common diseases", "Vaccine efficacy", "Incidence rates"], ans: 0 },
+                { q: "The main disadvantage of cross‑sectional studies is:", options: ["Cannot establish temporal sequence", "Expensive", "Long duration", "High loss to follow‑up"], ans: 0 }
+            ]},
+            surveillance: { title: "Disease Surveillance & Outbreak Investigation", next: "phn_role", questions: [
+                { q: "Surveillance is defined as:", options: ["Ongoing systematic collection, analysis, and interpretation of health data", "One‑time survey", "Outbreak investigation only", "Hospital record review"], ans: 0 },
+                { q: "NESSS stands for:", options: ["National Epidemic Sentinel Surveillance System", "National Epidemiology Survey System", "New Epidemic Surveillance System", "Notifiable Event Surveillance System"], ans: 0 },
+                { q: "Which of the following is a notifiable disease in the Philippines?", options: ["Acute Flaccid Paralysis (AFP)", "Common cold", "Headache", "Mild fever"], ans: 0 },
+                { q: "The first step in outbreak investigation is:", options: ["Prepare for field work", "Implement control measures", "Develop hypotheses", "Define cases"], ans: 0 },
+                { q: "A case definition should include:", options: ["Clinical criteria, time, place, person", "Only clinical criteria", "Only laboratory results", "Only treatment"], ans: 0 },
+                { q: "An epidemic occurs when:", options: ["Number of cases exceeds expected", "One case occurs", "Only in pandemic", "Only in endemic areas"], ans: 0 },
+                { q: "Active surveillance means:", options: ["Health department actively seeks cases", "Waiting for reports", "Media surveillance", "Passive reporting only"], ans: 0 },
+                { q: "The purpose of surveillance is to:", options: ["Guide public health action", "Collect data without use", "Publish academic papers", "Replace healthcare"], ans: 0 },
+                { q: "After implementing control measures during an outbreak, the next step is to:", options: ["Communicate findings", "Stop all activities", "Destroy data", "Ignore follow‑up"], ans: 0 },
+                { q: "A cluster is:", options: ["Aggregation of cases in time and place", "A single case", "A pandemic", "A chronic disease"], ans: 0 }
+            ]},
+            phn_role: { title: "PHN Role in Epidemiology", next: "mnemonics", questions: [
+                { q: "The PHN participates in surveillance by:", options: ["Reporting notifiable diseases through FHSIS", "Prescribing antibiotics", "Performing surgery", "Designing vaccines"], ans: 0 },
+                { q: "During an outbreak, the PHN's role includes:", options: ["Case finding, contact tracing, health education", "Only administrative work", "Closing the health center", "Ignoring the outbreak"], ans: 0 },
+                { q: "Which rate would the PHN compute to compare disease occurrence across barangays?", options: ["Incidence rate per 1,000", "Prevalence count", "Absolute numbers", "Death count"], ans: 0 },
+                { q: "The PHN uses vital statistics to:", options: ["Identify high‑risk groups and plan interventions", "Only report to national level", "Replace clinical assessment", "Calculate hospital fees"], ans: 0 },
+                { q: "As a frontline epidemiologist, the PHN should detect:", options: ["Early signals of disease outbreaks", "Only chronic diseases", "Only non‑communicable diseases", "Only injuries"], ans: 0 },
+                { q: "The PHN can contribute to research by:", options: ["Conducting community surveys", "Only reading studies", "Avoiding data collection", "Ignoring evidence"], ans: 0 },
+                { q: "When a PHN collects data on immunization coverage, this is part of:", options: ["Monitoring and evaluation (M&E)", "Treatment", "Rehabilitation", "Surgical care"], ans: 0 },
+                { q: "The PHN should present epidemiological evidence to the Local Health Board to:", options: ["Advocate for resource allocation", "Replace the mayor", "Close the health center", "Stop all programs"], ans: 0 },
+                { q: "Contact tracing is a key activity in controlling:", options: ["Communicable diseases (e.g., TB, STIs)", "Non‑communicable diseases only", "Injuries", "Genetic disorders"], ans: 0 },
+                { q: "The PHN's role in epidemiology is best described as:", options: ["Frontline data collector, analyst, and responder", "Passive recipient of orders", "Only administrative", "Exclusively curative"], ans: 0 }
+            ]}
+        };
+
+        // Build final 50‑question exam
+        let finalQs = [];
+        for(let sec of ['definition','triad','rates','studies','surveillance','phn_role']) {
+            finalQs = finalQs.concat(quizzes[sec].questions.slice(0,9));
+        }
+        while(finalQs.length < 50) finalQs.push(quizzes['definition'].questions[0]);
+        quizzes['final_quiz'] = { title: "Final 50-Item Exam: Epidemiology Concepts", next: null, questions: finalQs };
+
+        function unlockFirstSection() { if(!unlockedSections.includes('definition')) { unlockedSections.push('definition'); updateSidebarUI(); } showSection('definition'); }
+        function showSection(id) { if(!unlockedSections.includes(id) && id !== 'home') { alert("Complete the quiz at the bottom of the previous section to unlock."); return; } document.querySelectorAll('.content-section').forEach(el=>el.classList.add('hidden')); document.getElementById(id)?.classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('bg-epi-light','text-epi-dark','border-r-4','border-epi-dark'); btn.classList.add('text-slate-600');}); let active=document.getElementById('btn-'+id); if(active){active.classList.remove('text-slate-600');active.classList.add('bg-epi-light','text-epi-dark','border-r-4','border-epi-dark');} if(window.innerWidth<768)document.getElementById('sidebar').classList.add('hidden'); document.querySelector('main').scrollTop=0; }
+        function updateSidebarUI(){['home','definition','triad','rates','studies','surveillance','phn_role','mnemonics','final_quiz_sec'].forEach(sec=>{let btn=document.getElementById('btn-'+sec);if(!btn)return;let lock=btn.querySelector('.fa-lock'),icon=btn.querySelector('.nav-icon');if(unlockedSections.includes(sec)||sec==='home'){btn.classList.remove('locked-section');if(lock)lock.classList.add('hidden');if(icon)icon.classList.remove('hidden');}else{btn.classList.add('locked-section');if(lock)lock.classList.remove('hidden');if(icon)icon.classList.add('hidden');}});}
+        let currentQuiz = null;
+        function openQuiz(sectionId) { currentQuiz=sectionId; let qd=quizzes[sectionId]; document.getElementById('quiz-title').innerText=qd.title; let container=document.getElementById('quiz-questions-container'); container.innerHTML=''; qd.questions.forEach((q,idx)=>{let html=`<div class="bg-slate-50 p-4 rounded-xl mb-4"><p class="font-bold mb-3">${idx+1}. ${q.q}</p><div class="space-y-2">`; q.options.forEach((opt,oi)=>{html+=`<label class="flex items-center space-x-3 p-2 hover:bg-white cursor-pointer"><input type="radio" name="q${idx}" value="${oi}" class="form-radio text-epi"><span>${opt}</span></label>`;}); html+=`</div><div class="feedback-${idx} text-sm mt-2 hidden"></div></div>`; container.innerHTML+=html;}); document.getElementById('quiz-submit-btn').classList.remove('hidden'); document.getElementById('quiz-result-container').classList.add('hidden'); document.getElementById('quiz-modal').classList.remove('hidden'); }
+        function closeQuiz() { document.getElementById('quiz-modal').classList.add('hidden'); }
+        function submitQuiz() { let qd=quizzes[currentQuiz]; let score=0; for(let i=0;i<qd.questions.length;i++){ let selected=document.querySelector(`input[name="q${i}"]:checked`); let correct=(selected&&parseInt(selected.value)===qd.questions[i].ans); if(correct) score++; let fbDiv=document.querySelector(`.feedback-${i}`); if(fbDiv){ let correctAns=qd.questions[i].options[qd.questions[i].ans]; if(correct){fbDiv.innerHTML='✔ Correct!';fbDiv.parentElement?.classList.add('quiz-feedback-correct');}else{let selectedText=selected?qd.questions[i].options[parseInt(selected.value)]:"No answer";fbDiv.innerHTML=`✘ Incorrect. Correct: ${correctAns}`;fbDiv.parentElement?.classList.add('quiz-feedback-wrong');}fbDiv.classList.remove('hidden');}} let percent=(score/qd.questions.length)*100; let btn=document.getElementById('quiz-submit-btn'); let resultDiv=document.getElementById('quiz-result-container'); btn.classList.add('hidden'); resultDiv.classList.remove('hidden'); if(percent>=75){ if(currentQuiz==='final_quiz'){ resultDiv.innerHTML=`<div class="text-amber-500 text-5xl text-center">🏆</div><h3 class="text-2xl font-black text-center">Excellent!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz()" class="mt-4 w-full bg-slate-800 text-white py-2 rounded-lg">Close</button>`; return; } if(qd.next && !unlockedSections.includes(qd.next)){ unlockedSections.push(qd.next); if(qd.next==='mnemonics') unlockedSections.push('final_quiz_sec'); updateSidebarUI(); } resultDiv.innerHTML=`<div class="text-green-600 text-5xl text-center">✓</div><h3 class="text-2xl font-black text-center">Passed!</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="closeQuiz(); showSection('${qd.next}')" class="mt-4 w-full bg-green-600 text-white py-2 rounded-lg">Unlock Next Section</button>`; } else { resultDiv.innerHTML=`<div class="text-red-500 text-5xl text-center">✗</div><h3 class="text-2xl font-black text-center">Failed (Need 75%)</h3><p class="text-center">Score ${score}/${qd.questions.length} (${percent}%)</p><button onclick="openQuiz('${currentQuiz}')" class="mt-4 w-full bg-slate-600 text-white py-2 rounded-lg">Try Again</button>`; } }
+        function toggleRecallMode(){ let active=!document.body.classList.contains('recall-mode'); let toggle=document.getElementById('recall-toggle'),knob=document.getElementById('recall-knob'); if(active){document.body.classList.add('recall-mode');toggle.classList.add('bg-epi-dark');knob.classList.add('translate-x-6');}else{document.body.classList.remove('recall-mode');toggle.classList.remove('bg-epi-dark');knob.classList.remove('translate-x-6');} }
+        function toggleMobileMenu(){ let s=document.getElementById('sidebar'); if(s.classList.contains('hidden')) s.classList.remove('hidden'); else s.classList.add('hidden'); }
+        document.addEventListener('DOMContentLoaded',()=>{ updateSidebarUI(); document.querySelectorAll('.reveal-text').forEach(el=>el.addEventListener('click',function(){if(document.body.classList.contains('recall-mode'))this.classList.toggle('revealed');})); });
+    </script>
+</body>
+</html>
